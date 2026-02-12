@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>For Bebu ❤️</title>
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url("background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow: hidden;
+  animation: bgZoom 20s ease forwards;
+}
+
+@keyframes bgZoom {
+  from { background-size: 100%; }
+  to { background-size: 115%; }
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.35);
+  z-index: 0;
+}
+
+#flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  width: 340px;
+  height: 680px;
+  background: #000;
+  border-radius: 40px;
+  padding: 15px;
+  box-shadow: 0 0 60px rgba(0,0,0,0.7);
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  color: white;
+  text-align: center;
+  padding: 10px;
+  font-weight: bold;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.bubble {
+  max-width: 75%;
+  padding: 12px 16px;
+  border-radius: 20px;
+  font-size: 17px;
+  animation: pop 0.3s ease;
+}
+
+.me {
+  align-self: flex-end;
+  background: #ff2d55;
+  color: white;
+}
+
+.her {
+  align-self: flex-start;
+  background: #222;
+  color: white;
+}
+
+.typing {
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+@keyframes pop {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+button {
+  padding: 15px;
+  border-radius: 20px;
+  border: none;
+  font-size: 18px;
+  background: white;
+  color: #ff2d55;
+  margin: 10px;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+button.show {
+  opacity: 1;
+}
+
+.heart, .confetti {
+  position: absolute;
+  pointer-events: none;
+}
+
+.heart { animation: float 6s linear infinite; }
+.confetti { animation: confettiFall 2s linear forwards; }
+
+@keyframes float {
+  from { transform: translateY(100vh); }
+  to { transform: translateY(-10vh); opacity: 0; }
+}
+
+@keyframes confettiFall {
+  from { transform: translateY(-10vh) rotate(0deg); }
+  to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+.vibrate { animation: vibrate 0.3s linear; }
+
+@keyframes vibrate {
+  0% { transform: translate(0); }
+  25% { transform: translate(-2px,2px); }
+  50% { transform: translate(2px,-2px); }
+  75% { transform: translate(-2px,2px); }
+  100% { transform: translate(0); }
+}
+</style>
+</head>
+
+<body>
+
+<div id="flash"></div>
+
+<audio id="bgMusic" loop autoplay muted>
+  <source src="give-me-your-forever.mp3" type="audio/mpeg">
+</audio>
+
+<div class="container" id="phone">
+  <div class="header">Bebu 💖</div>
+  <div class="chat" id="chatBox"></div>
+  <button id="valBtn" onclick="sayYes()">Tap for Yes ❤️</button>
+</div>
+
+<script>
+
+const music = document.getElementById("bgMusic");
+
+window.addEventListener("load", () => {
+  music.muted = true;
+  music.play().then(()=>{
+    setTimeout(()=>{
+      music.muted = false;
+      music.volume = 0.35;
+    },800);
+  }).catch(()=>{});
+});
+
+document.addEventListener("click", ()=>{
+  music.muted=false;
+  music.play();
+},{once:true});
+
+const chatBox = document.getElementById("chatBox");
+const valBtn = document.getElementById("valBtn");
+
+/* YOUR NEW MESSAGE */
+const messages=[
+"Hey Bebu…",
+"I ran out of ideas to say this creatively.",
+"(Just so u know my music to, click lang anywhere sa screen if wala pang music)",
+"You know you're such a weird specimen—something u used to call me.",
+"Specially when you do that excited Donald Duck chika voice…",
+"It’s annoyingly cute.",
+"I know that you know you're overchhlyy beautiful.",
+"Aphrodite must be very threatened the moment you were born🤯",
+"I’m really lucky you’re my girl😩.",
+"I will always choose you. Every day.",
+"Will you be my Valentine? 🥺"
+];
+
+let msgIndex=0;
+
+/* SLOWER TIMING */
+const typingDelay = 1200;
+const messageGap = 1600;
+
+function showTyping(){
+  const t=document.createElement("div");
+  t.className="bubble her typing";
+  t.id="typing";
+  t.textContent="typing...";
+  chatBox.appendChild(t);
+}
+
+function removeTyping(){
+  const t=document.getElementById("typing");
+  if(t) t.remove();
+}
+
+function sendMessage(){
+  if(msgIndex<messages.length){
+
+    showTyping();
+
+    setTimeout(()=>{
+      removeTyping();
+
+      const b=document.createElement("div");
+      b.className="bubble me";
+      b.textContent=messages[msgIndex];
+
+      chatBox.appendChild(b);
+      chatBox.scrollTop=chatBox.scrollHeight;
+
+      if(msgIndex === messages.length - 1){
+        setTimeout(()=> valBtn.classList.add("show"),800);
+      }
+
+      msgIndex++;
+      setTimeout(sendMessage,messageGap);
+
+    },typingDelay);
+  }
+}
+
+setTimeout(sendMessage,1200);
+
+/* HEARTS */
+setInterval(()=>{
+  const h=document.createElement("div");
+  h.className="heart";
+  h.innerHTML="❤️";
+  h.style.left=Math.random()*100+"vw";
+  h.style.fontSize=Math.random()*20+15+"px";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),6000);
+},400);
+
+/* CONFETTI */
+function confettiBlast(){
+  for(let i=0;i<60;i++){
+    const c=document.createElement("div");
+    c.className="confetti";
+    c.innerHTML="💖";
+    c.style.left=Math.random()*100+"vw";
+    c.style.fontSize=Math.random()*20+10+"px";
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),2000);
+  }
+}
+
+function screenFlash(){
+  const flash=document.getElementById("flash");
+  flash.style.opacity=1;
+  setTimeout(()=>{
+    flash.style.transition="opacity 1s ease";
+    flash.style.opacity=0;
+  },120);
+}
+
+function sayYes(){
+
+  const phone=document.getElementById("phone");
+  phone.classList.add("vibrate");
+  setTimeout(()=>phone.classList.remove("vibrate"),300);
+
+  music.currentTime=134;
+  music.play();
+
+  setTimeout(screenFlash,100);
+  
+
+  valBtn.innerText="I love you ❤️";
+  valBtn.style.background="#ff2d55";
+  valBtn.style.color="white";
+
+}
+
+</script>
+</body>
+</html>
